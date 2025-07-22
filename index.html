@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>כלי בינה מלאכותית לחיסכון בזמן</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2196F3 0%, #9C27B0 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.05) 10px,
+                rgba(255,255,255,0.05) 20px
+            );
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            padding: 40px;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4, #FECA57);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tool-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .tool-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tool-name::before {
+            content: '🤖';
+            font-size: 1.2rem;
+        }
+
+        .tool-category {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .tool-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .tool-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .tool-link:hover {
+            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+            transform: translateX(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .tool-link::after {
+            content: '↗';
+            font-size: 1rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 30px 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid transparent;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .stats {
+            background: rgba(102, 126, 234, 0.05);
+            padding: 20px 40px;
+            text-align: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .stats-item {
+            display: inline-block;
+            margin: 0 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .stats-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .filter-buttons {
+                padding: 20px;
+            }
+            
+            .filter-btn {
+                font-size: 0.8rem;
+                padding: 8px 15px;
+            }
+        }
+
+        .search-box {
+            padding: 20px 40px;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 25px;
+            font-size: 1rem;
+            font-family: 'Heebo', Arial, sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+            direction: rtl;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 כלי בינה מלאכותית לחיסכון בזמן</h1>
+            <p>אוסף מקיף של הכלים החדשניים ביותר לשיפור היעילות והפרודוקטיביות</p>
+        </div>
+
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="חפש כלי לפי שם או תיאור..." id="searchInput">
+        </div>
+
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filterTools('all')">הכל</button>
+            <button class="filter-btn" onclick="filterTools('chat')">צ'אט ועזרה</button>
+            <button class="filter-btn" onclick="filterTools('transcription')">תמלול</button>
+            <button class="filter-btn" onclick="filterTools('writing')">כתיבה ועריכה</button>
+            <button class="filter-btn" onclick="filterTools('automation')">אוטומציה</button>
+            <button class="filter-btn" onclick="filterTools('content')">יצירת תוכן</button>
+            <button class="filter-btn" onclick="filterTools('media')">מדיה</button>
+        </div>
+
+        <div class="tools-grid" id="toolsGrid">
+            <div class="tool-card" data-category="chat">
+                <div class="tool-name">ChatGPT</div>
+                <div class="tool-category">צ'אט ועזרה כללית</div>
+                <div class="tool-description">כלי בינה מלאכותית רב-שימושי שמבין וכותב עברית ברמה גבוהה, מסייע בהפקת רעיונות, ניסוחים, תחקיר, תרגום, מענה מהיר לכל שאלה או צורך יומיומי, מתאים לכל תחום.</div>
+                <a href="https://chat.openai.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="chat">
+                <div class="tool-name">Gemini</div>
+                <div class="tool-category">חיפוש וצ'אט</div>
+                <div class="tool-description">עוזר אישי של גוגל המבוסס על בינה מלאכותית, יודע לענות על שאלות, לנסח טקסטים, להציע רעיונות, לחפש מידע ולעזור בעשרות פעולות יומיומיות, בעברית מצוינת.</div>
+                <a href="https://gemini.google.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="chat">
+                <div class="tool-name">Copilot</div>
+                <div class="tool-category">עזרה במיילים וכתיבה</div>
+                <div class="tool-description">עוזר חכם של מייקרוסופט המחובר לאאוטלוק, בינג ושירותים נוספים, יודע לסכם מיילים, לנסח תשובות, למצוא מידע ולפשט תהליכים, תומך מלא בעברית ומותאם לשוק הישראלי.</div>
+                <a href="https://copilot.microsoft.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="writing">
+                <div class="tool-name">Grammarly</div>
+                <div class="tool-category">תיקון שפה וכתיבה</div>
+                <div class="tool-description">עוזר לכתוב בצורה נכונה ומקצועית, תומך בעברית ברמה בסיסית, מספק הצעות לתיקון ושיפור ניסוח, גם במיילים וגם במסמכים.</div>
+                <a href="https://grammarly.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="transcription">
+                <div class="tool-name">Otter.ai</div>
+                <div class="tool-category">תמלול אוטומטי</div>
+                <div class="tool-description">מתמלל פגישות, שיחות והקלטות אוטומטית לעברית, מסייע לחסוך זמן בסיכומי פגישות, שימור ידע, והעברת תכנים לקבצי טקסט.</div>
+                <a href="https://otter.ai/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="transcription">
+                <div class="tool-name">Fireflies.ai</div>
+                <div class="tool-category">תמלול פגישות והערות</div>
+                <div class="tool-description">עוזר לתעד פגישות בזום או גוגל מיט, מסכם שיחות באופן אוטומטי ומאפשר שליחת סיכום לעובדים וללקוחות, תומך גם בעברית.</div>
+                <a href="https://fireflies.ai/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="writing">
+                <div class="tool-name">Notion AI</div>
+                <div class="tool-category">סיכומים ומשימות</div>
+                <div class="tool-description">מחולל טקסטים, סיכומים, ניהול משימות, בניית מסמכים ומערכי תוכן' הכל עם תמיכה מלאה בעברית ובינה מלאכותית שמבינה אותך.</div>
+                <a href="https://notion.so/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="automation">
+                <div class="tool-name">Make</div>
+                <div class="tool-category">אוטומציות חכמות</div>
+                <div class="tool-description">פלטפורמה המאפשרת בניית תהליכים אוטומטיים חכמים בין מאות שירותים שונים, שילוב תהליכים מורכבים בעסק בקלות וללא קוד.</div>
+                <a href="https://www.make.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="automation">
+                <div class="tool-name">N8N</div>
+                <div class="tool-category">אוטומציה מתקדמת</div>
+                <div class="tool-description">כלי אוטומציה מתקדם (קוד פתוח) שמאפשר לחבר בין כלים דיגיטליים, לבצע תהליכים אוטומטיים מורכבים, מאוד חזק לעסקים ופרילנסרים בארץ. מצוין לפיתוח סוכנים חכמים בבינה מלאכותית.</div>
+                <a href="https://n8n.io/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="media">
+                <div class="tool-name">ElevenLabs</div>
+                <div class="tool-category">קריינות אוטומטית</div>
+                <div class="tool-description">ממיר טקסט לקול טבעי (קריינות מקצועית בלחיצת כפתור), מתאים לפודקאסטים, סרטונים, תרגום קולי ויוטיוברים.</div>
+                <a href="https://elevenlabs.io/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="media">
+                <div class="tool-name">D-ID</div>
+                <div class="tool-category">יצירת סרטוני דיבור AI</div>
+                <div class="tool-description">הופך כל תמונה לדמות מדברת בסרטון וידאו! משדרג תהליכי שיווק, שירות, והדרכות לעסקים.</div>
+                <a href="https://www.d-id.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="media">
+                <div class="tool-name">Descript</div>
+                <div class="tool-category">עריכת אודיו/וידאו</div>
+                <div class="tool-description">עורך אודיו ווידאו בצורה חכמה על בסיס טקסט, אפשר להקליט, לתמלל, לערוך ולייצא סרטונים בעברית, הכל בקלות ובלי ידע מקצועי.</div>
+                <a href="https://www.descript.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="writing">
+                <div class="tool-name">Wordtune</div>
+                <div class="tool-category">שיפור טקסטים בעברית</div>
+                <div class="tool-description">עוזר לשפר, לנסח ולשכתב טקסטים, כולל הצעות לניסוחים שונים, קיצור, פישוט או הרחבה, כלי נהדר לכתיבה יעילה.</div>
+                <a href="https://www.wordtune.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="other">
+                <div class="tool-name">Mem</div>
+                <div class="tool-category">ניהול ידע אוטומטי</div>
+                <div class="tool-description">שומר, מארגן ומסכם מידע מהשיחות, מהמייל ומהמסמכים שלך, כולל חיפוש חכם ותזכורות לפי הקשר.</div>
+                <a href="https://mem.ai/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="other">
+                <div class="tool-name">Krisp</div>
+                <div class="tool-category">ניקוי רעשי רקע</div>
+                <div class="tool-description">מסנן רעשי רקע בשיחות וידאו ואודיו, מבטיח שיחות נקיות וברורות גם מהארץ, עובד עם כל שירות פופולרי (זום, טימס, גוגל מיט).</div>
+                <a href="https://krisp.ai/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="content">
+                <div class="tool-name">Canva AI</div>
+                <div class="tool-category">יצירת תמונות/עיצובים</div>
+                <div class="tool-description">מאפשר ליצור גרפיקות, פוסטים, מצגות ותמונות באמצעות AI, עם ממשק פשוט שמתאים גם למי שלא מעצב מקצועי.</div>
+                <a href="https://www.canva.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="transcription">
+                <div class="tool-name">TL;DV</div>
+                <div class="tool-category">סיכום פגישות אוטומטי</div>
+                <div class="tool-description">מסכם פגישות והקלטות בווידאו בצורה אוטומטית, מפיק תמלול והיילייטס בעברית, חוסך זמן בניהול ישיבות.</div>
+                <a href="https://tldv.io/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="writing">
+                <div class="tool-name">QuillBot</div>
+                <div class="tool-category">פרפראזה/שכתוב בעברית</div>
+                <div class="tool-description">משכתב ומנסח מחדש טקסטים בעברית, עוזר להימנע מחזרתיות, לגוון את הסגנון ולחדד מסרים בכל סוג תוכן.</div>
+                <a href="https://quillbot.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="automation">
+                <div class="tool-name">Monday AI</div>
+                <div class="tool-category">ניהול משימות אוטומטי</div>
+                <div class="tool-description">משפר את העבודה בצוותים ע"י אוטומציות, חלוקת משימות חכמה, וסיכומי פרויקטים בעברית, הכל במקום אחד.</div>
+                <a href="https://monday.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="transcription">
+                <div class="tool-name">SpeechText.AI</div>
+                <div class="tool-category">תמלול קבצי אודיו ווידאו</div>
+                <div class="tool-description">ממיר אוטומטית קבצי קול או וידאו לטקסט בעברית, מעולה לפודקאסטים, תמלול ראיונות, הרצאות ושיחות עבודה.</div>
+                <a href="https://speechtext.ai/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="automation">
+                <div class="tool-name">Magical AI</div>
+                <div class="tool-category">קיצורי דרך ותשובות אוטומטיות</div>
+                <div class="tool-description">מאפשר לשמור תגובות, תשובות, פסקאות ופרטי קשר ולשלוף אותם בצ'אט, אימייל, CRM, רשתות ועוד, כולל תמיכה בעברית. חוסך המון זמן בשירות לקוחות, מכירות ותפעול.</div>
+                <a href="https://www.getmagical.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="content">
+                <div class="tool-name">Simplified</div>
+                <div class="tool-category">יצירת תוכן ושיווק</div>
+                <div class="tool-description">פלטפורמה ליצירת פוסטים, סרטונים, דפי נחיתה, גרפיקות וטקסטים, כולל מחולל תוכן בעברית ושימוש חינמי מוגבל.</div>
+                <a href="https://simplified.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="other">
+                <div class="tool-name">Scispace Copilot</div>
+                <div class="tool-category">סיכום מאמרים ומסמכים</div>
+                <div class="tool-description">אידיאלי לסטודנטים וחוקרים: מעלה מאמרים/קבצים (כולל בעברית), מסכם ומבאר אותם תוך שניות.</div>
+                <a href="https://typeset.io/copilot" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="transcription">
+                <div class="tool-name">Tactiq</div>
+                <div class="tool-category">סיכום תמלולים והפקת תובנות</div>
+                <div class="tool-description">מתחבר ל-Zoom, Google Meet, Teams, תומך בעברית, מסכם שיחות ומציג את התובנות והמשימות.</div>
+                <a href="https://tactiq.io/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="other">
+                <div class="tool-name">RescueTime</div>
+                <div class="tool-category">ניהול זמן ומדידת יעילות</div>
+                <div class="tool-description">כלי אוטומטי למדידת זמן מסך, זיהוי הסחות דעת והצגת דוחות.</div>
+                <a href="https://rescuetime.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="other">
+                <div class="tool-name">Liner</div>
+                <div class="tool-category">סיכום אתרים ומאמרים</div>
+                <div class="tool-description">מסכם טקסטים באינטרנט, מציע היילייטס, תובנות עיקריות וסיכום קצר בעברית, כולל הרחבה לכרום.</div>
+                <a href="https://getliner.com/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="chat">
+                <div class="tool-name">Perplexity AI</div>
+                <div class="tool-category">מנוע חיפוש וידע חכם</div>
+                <div class="tool-description">שואל שאלות ומקבל תשובות ממוקדות ממקורות שונים, מצוין למציאת מידע מהיר.</div>
+                <a href="https://www.perplexity.ai/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="content">
+                <div class="tool-name">Surfer AI</div>
+                <div class="tool-category">כתיבה שיווקית ותוכן SEO</div>
+                <div class="tool-description">מחולל פוסטים, דפי נחיתה ומאמרים אוטומטית, כולל המלצות SEO והתאמה לגוגל.</div>
+                <a href="https://surferseo.com/ai/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+
+            <div class="tool-card" data-category="other">
+                <div class="tool-name">DocuSign AI</div>
+                <div class="tool-category">חתימות דיגיטליות אוטומטיות</div>
+                <div class="tool-description">מייצר, שולח ומנהל מסמכים לחתימה דיגיטלית, מתאים לעסקים בישראל.</div>
+                <a href="https://www.docusign.com/products/ai/" class="tool-link" target="_blank">בקר באתר</a>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stats-item">
+                <span class="stats-number">28</span>
+                כלים זמינים
+            </div>
+            <div class="stats-item">
+                <span class="stats-number">7</span>
+                קטגוריות שונות
+            </div>
+            <div class="stats-item">
+                <span class="stats-number">100%</span>
+                תמיכה בעברית
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // פונקציה לסינון הכלים לפי קטגוריה
+        function filterTools(category) {
+            const cards = document.querySelectorAll('.tool-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // עדכון כפתורים
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // סינון כרטיסים
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.5s ease';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // פונקציה לחיפוש
+        function searchTools() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.tool-card');
+            
+            cards.forEach(card => {
+                const toolName = card.querySelector('.tool-name').textContent.toLowerCase();
+                const toolDescription = card.querySelector('.tool-description').textContent.toLowerCase();
+                const toolCategory = card.querySelector('.tool-category').textContent.toLowerCase();
+                
+                if (toolName.includes(searchTerm) || 
+                    toolDescription.includes(searchTerm) || 
+                    toolCategory.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.5s ease';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // הוספת מאזין לאירוע חיפוש
+        document.getElementById('searchInput').addEventListener('input', searchTools);
+
+        // אנימציות CSS נוספות
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            .tool-card {
+                animation: fadeIn 0.5s ease;
+            }
+            
+            .tool-card:nth-child(even) {
+                animation-delay: 0.1s;
+            }
+            
+            .tool-card:nth-child(3n) {
+                animation-delay: 0.2s;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // הוספת אפקט hover למספרים בסטטיסטיקה
+        document.querySelectorAll('.stats-number').forEach(number => {
+            number.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.2)';
+                this.style.transition = 'transform 0.3s ease';
+            });
+            
+            number.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
